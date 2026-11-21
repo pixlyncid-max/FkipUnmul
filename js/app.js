@@ -398,8 +398,8 @@
             dom.espBadge.className = 'sensor-badge active-warning';
             dom.espBadge.textContent = 'Sinkronisasi...';
         } else if (newState === 'online') {
-            dom.connectionDot.className = 'status-dot online';
-            dom.connectionText.textContent = 'Terhubung Real-time';
+            dom.connectionDot.className = state.hasReceivedData ? 'status-dot online' : 'status-dot connecting';
+            dom.connectionText.textContent = state.hasReceivedData ? 'Terhubung Real-time' : 'Database Terhubung';
             dom.systemStateBanner.className = 'system-state-banner state-online';
             dom.stateBannerIcon.className = 'fas fa-circle-check';
             dom.stateBannerTitle.textContent = state.hasReceivedData
@@ -408,9 +408,7 @@
             dom.stateBannerDesc.textContent = customMessage || (state.hasReceivedData
                 ? 'Komunikasi dua arah dengan ESP32, sensor AJ-SR04M, LED, Buzzer, dan Pompa Pengisi Air berjalan normal.'
                 : 'Database sudah terhubung. Nyalakan perangkat ESP32 atau gunakan tombol kontrol pompa di bawah untuk memulai pengujian.');
-            dom.espBadge.className = 'sensor-badge online';
-            dom.espBadge.textContent = 'Terhubung';
-            dom.espDeviceDesc.textContent = 'Komunikasi cloud aktif';
+            updateEspDeviceHealthUI();
         } else if (newState === 'error') {
             dom.connectionDot.className = 'status-dot error';
             dom.connectionText.textContent = 'Gangguan Koneksi';
@@ -600,56 +598,147 @@
     }
 
     // Firebase telemetry ESP32; status pompa hanya dari perangkat, bukan dari klik tombol.
-    function processDatabaseSnapshot(rootData) {
-        const device = rootData?.devices?.esp32_001;
-        const sensorNode = device?.realtime;
-        if (!sensorNode || typeof sensorNode !== 'object') {
-            setConnectionState('connecting', 'Menunggu telemetry dari ESP32.');
+    const ESP_STALE_THRESHOLD_MS = 18000;
+    let staleWatchdogTimer = null;
+    let lastProcessedSignature = null;
+
+    function normalizeTimestampMs(rawTs) {
+        const num = Number(rawTs);
+        if (!Number.isFinite(num) || num <= 0) return null;
+        // Jika firmware mengirim epoch dalam detik (< 1e11) konversi ke milidetik; jika millis() kecil (< 1e9), gunakan waktu terima browser
+        if (num >= 1e12) return num;
+        if (num >= 1e9) return num * 1000;
+        return null;
+    }
+
+    function updateEspDeviceHealthUI() {
+        if (!state.hasReceivedData) {
+            dom.espBadge.className = 'sensor-badge active-warning';
+            dom.espBadge.textContent = 'Menunggu ESP32';
+            dom.espDeviceDesc.textContent = 'Database terhubung, menunggu paket data ESP32';
             return;
         }
+        const nowMs = Date.now();
+        const ageMs = state.lastUpdateTimestamp ? (nowMs - state.lastUpdateTimestamp) : Infinity;
+        const isDeviceStale = state.deviceExplicitOffline || ageMs > ESP_STALE_THRESHOLD_MS;
+
+        if (isDeviceStale) {
+            dom.espBadge.className = 'sensor-badge active-warning';
+            dom.espBadge.textContent = state.deviceExplicitOffline ? 'ESP32 Offline' : 'Telemetri Lama';
+            const secAgo = Number.isFinite(ageMs) ? Math.round(ageMs / 1000) : '--';
+            dom.espDeviceDesc.textContent = `Tidak ada paket baru (${secAgo} dtk lalu)`;
+            if (state.connectionState === 'online') {
+                dom.connectionDot.className = 'status-dot connecting';
+                dom.connectionText.textContent = 'Firebase Aktif (ESP32 Diam)';
+            }
+        } else {
+            dom.espBadge.className = 'sensor-badge online';
+            dom.espBadge.textContent = 'ESP32 Online';
+            dom.espDeviceDesc.textContent = 'Transmisi telemetri real-time aktif';
+            if (state.connectionState === 'online') {
+                dom.connectionDot.className = 'status-dot online';
+                dom.connectionText.textContent = 'Terhubung Real-time';
+            }
+        }
+    }
+
+    function processDatabaseSnapshot(payload) {
+        // Mendukung objek langsung dari node /realtime maupun objek berbungkus /devices/esp32_001/realtime
+        const sensorNode = (payload && typeof payload === 'object' && payload.tinggi_air !== undefined)
+            ? payload
+            : (payload?.realtime || payload?.devices?.esp32_001?.realtime || payload);
+
+        if (!sensorNode || typeof sensorNode !== 'object' || (
+            sensorNode.tinggi_air === undefined &&
+            sensorNode.jarak_sensor === undefined &&
+            sensorNode.pompa_aktif === undefined &&
+            sensorNode.sensor_valid === undefined
+        )) {
+            setConnectionState('connecting', 'Menunggu paket telemetry dari ESP32.');
+            return;
+        }
+
         const rawLevel = sensorNode.tinggi_air;
+        const rawDist = sensorNode.jarak_sensor;
+        const rawUpdated = sensorNode.updated_at;
+        state.deviceExplicitOffline = sensorNode.online === false;
+
         if (typeof sensorNode.pompa_aktif === 'boolean') state.pumpActive = sensorNode.pompa_aktif;
         if (typeof sensorNode.buzzer_aktif === 'boolean') state.buzzerActive = sensorNode.buzzer_aktif;
         if ([1, 2, 3].includes(Number(sensorNode.target_cm))) {
             state.targetLevelCm = Number(sensorNode.target_cm);
             state.pumpMode = 'target';
         }
+
         if (sensorNode.sensor_valid === false) {
             state.hasReceivedData = false;
             renderTelemetryUI();
-            setConnectionState('error', 'Sensor ESP32 tidak valid.');
+            setConnectionState('error', 'Sensor AJ-SR04M pada ESP32 melaporkan pembacaan tidak valid.');
             return;
         }
+
+        // Hindari pemrosesan berulang jika snapshot identik tidak berubah sama sekali
+        const snapshotSignature = `${rawLevel}|${rawDist}|${sensorNode.pompa_aktif}|${sensorNode.buzzer_aktif}|${sensorNode.target_cm}|${sensorNode.status_air}|${rawUpdated}|${sensorNode.online}`;
+        const isDuplicateSnapshot = (snapshotSignature === lastProcessedSignature);
+        lastProcessedSignature = snapshotSignature;
+
         if (rawLevel !== undefined && rawLevel !== null && Number.isFinite(Number(rawLevel))) {
             const level = Math.max(0, Number(rawLevel));
             const nowMs = Date.now();
-            if (state.lastWaterLevel !== null && state.lastUpdateTimestamp !== null) {
-                const dtSec = Math.max(1, (nowMs - state.lastUpdateTimestamp) / 1000);
-                state.rateOfChange = (level - state.lastWaterLevel) / dtSec;
-            } else state.rateOfChange = 0;
-            state.lastWaterLevel = level;
-            state.lastUpdateTimestamp = nowMs;
+            const telemetryMs = normalizeTimestampMs(rawUpdated) || nowMs;
+
+            if (!isDuplicateSnapshot) {
+                if (state.lastWaterLevel !== null && state.lastUpdateTimestamp !== null) {
+                    const prevTs = state.lastTelemetryTimestamp || state.lastUpdateTimestamp;
+                    const dtSec = Math.max(0.25, (telemetryMs - prevTs) / 1000);
+                    state.rateOfChange = (level - state.lastWaterLevel) / dtSec;
+                } else {
+                    state.rateOfChange = 0;
+                }
+                state.lastWaterLevel = level;
+                state.lastTelemetryTimestamp = telemetryMs;
+                if (rawUpdated !== undefined && rawUpdated !== state.lastRawUpdatedAt) {
+                    state.lastRawUpdatedAt = rawUpdated;
+                    state.lastUpdateTimestamp = normalizeTimestampMs(rawUpdated) || nowMs;
+                } else if (!state.lastUpdateTimestamp || !normalizeTimestampMs(rawUpdated)) {
+                    state.lastUpdateTimestamp = nowMs;
+                }
+            }
+
             state.waterLevel = level;
-            state.sensorDistance = Number.isFinite(Number(sensorNode.jarak_sensor)) ? Number(sensorNode.jarak_sensor) : null;
+            state.sensorDistance = Number.isFinite(Number(rawDist)) ? Number(rawDist) : null;
             state.hasReceivedData = true;
+
             const evaluatedStatus = evaluateWaterStatus(level);
             state.ledGreen = evaluatedStatus === 'normal';
             state.ledYellow = evaluatedStatus === 'waspada';
             state.ledRed = evaluatedStatus === 'bahaya';
-            const timeLabel = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+
+            const displayDate = new Date(state.lastUpdateTimestamp || nowMs);
+            const timeLabel = displayDate.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
             dom.lastSyncInfo.textContent = `Pembaruan terakhir diterima: ${timeLabel}`;
-            if (lastRecordedLevel !== level || nowMs - lastRecordedTimeMs > 1500) {
+
+            // Catat ke grafik dan tabel historis hanya ketika ada perubahan snapshot/nilai baru
+            if (!isDuplicateSnapshot && (lastRecordedLevel !== level || nowMs - lastRecordedTimeMs >= 1000)) {
                 lastRecordedLevel = level;
                 lastRecordedTimeMs = nowMs;
                 state.readings.push(level);
+                if (state.readings.length > 500) state.readings.shift();
                 updateStatsUI();
                 appendChartPoint(timeLabel, Number(level.toFixed(1)));
                 appendHistoryRow(level, state.sensorDistance, evaluatedStatus);
             }
             checkWarningTransitions(evaluatedStatus, level, timeLabel);
         }
+
         setConnectionState('online');
         renderTelemetryUI();
+        updateEspDeviceHealthUI();
     }
 
     // Perintah atomik: id bertambah, action dan target dikirim bersama.
@@ -661,7 +750,7 @@
             showNotification('danger', 'Firebase SDK belum siap', 'Tidak bisa mengirim kontrol. Periksa koneksi internet dan script Firebase.');
             return;
         }
-        if (!['START','STOP'].includes(action) || ![1,2,3].includes(targetCm)) return;
+        if (!['START', 'STOP'].includes(action) || ![1, 2, 3].includes(targetCm)) return;
         commandBusy = true;
         const buttons = [dom.btnDashPumpOn, dom.btnDashPumpOff, dom.btnSimPumpOn, dom.btnSimPumpOff, ...dom.targetBtns];
         buttons.forEach(b => { if (b) b.disabled = true; });
@@ -691,13 +780,13 @@
     }
     function triggerManualPump(turnOn) {
         // Firmware tidak mendukung ON tanpa batas; ON aman dibatasi target 3 cm.
-        const target = [1,2,3].includes(state.targetLevelCm) ? state.targetLevelCm : 3;
+        const target = [1, 2, 3].includes(state.targetLevelCm) ? state.targetLevelCm : 3;
         sendPumpCommand(turnOn ? 'START' : 'STOP', target,
             turnOn ? `START menuju ${target} cm` : 'STOP pompa');
     }
     dom.targetBtns.forEach(btn => btn.addEventListener('click', () => {
         const target = Number(btn.dataset.targetCm);
-        if ([1,2,3].includes(target)) triggerTargetFill(target);
+        if ([1, 2, 3].includes(target)) triggerTargetFill(target);
     }));
     dom.btnDashPumpOn.addEventListener('click', () => triggerManualPump(true));
     dom.btnDashPumpOff.addEventListener('click', () => triggerManualPump(false));
@@ -709,17 +798,33 @@
 
     function connectToFirebase() {
         setConnectionState('connecting');
+
+        if (!staleWatchdogTimer) {
+            staleWatchdogTimer = setInterval(updateEspDeviceHealthUI, 3000);
+        }
+
         if (typeof firebase !== 'undefined' && firebase.database) {
             try {
+                if (restPollTimer) {
+                    clearInterval(restPollTimer);
+                    restPollTimer = null;
+                }
+
                 firebaseApp = firebase.apps?.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
                 firebaseDb = firebase.database(firebaseApp);
+
+                if (connectedRef) connectedRef.off();
                 connectedRef = firebaseDb.ref('.info/connected');
                 connectedRef.on('value', snap => {
-                    if (!snap.val()) setConnectionState('connecting', 'Koneksi Firebase terputus.');
+                    if (snap.val() === false) {
+                        setConnectionState('connecting', 'Koneksi ke Firebase terputus, menyambungkan ulang...');
+                    }
                 });
-                rootRef = firebaseDb.ref(DEVICE_BASE);
+
+                if (rootRef) rootRef.off();
+                rootRef = firebaseDb.ref(`${DEVICE_BASE}/realtime`);
                 rootRef.on('value', snapshot => {
-                    processDatabaseSnapshot({devices: {esp32_001: snapshot.val()}});
+                    processDatabaseSnapshot(snapshot.val());
                 }, err => setConnectionState('error', `Firebase: ${err.message}`));
                 return;
             } catch (err) {
@@ -728,20 +833,37 @@
         }
         startRestFallbackPolling();
     }
+
     function startRestFallbackPolling() {
-        const url = `${FIREBASE_CONFIG.databaseURL}/${DEVICE_BASE}.json`;
+        const url = `${FIREBASE_CONFIG.databaseURL}/${DEVICE_BASE}/realtime.json`;
+
         const fetchSnapshot = async () => {
             try {
                 const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                processDatabaseSnapshot({devices:{esp32_001:await res.json()}});
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+
+                processDatabaseSnapshot(data);
+
             } catch (err) {
-                setConnectionState('error', `Firebase REST: ${err.message}`);
+                setConnectionState(
+                    'error',
+                    `Firebase REST: ${err.message}`
+                );
             }
         };
+
         fetchSnapshot();
-        if (restPollTimer) clearInterval(restPollTimer);
-        restPollTimer = setInterval(fetchSnapshot, 2000);
+
+        if (restPollTimer) {
+            clearInterval(restPollTimer);
+        }
+
+        restPollTimer = setInterval(fetchSnapshot, 1500);
     }
 
     // Statistics
@@ -1049,7 +1171,7 @@
     // Fullscreen Toggle
     dom.btnFullscreen.addEventListener('click', () => {
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
+            document.documentElement.requestFullscreen().catch(() => { });
             dom.btnFullscreen.innerHTML = '<i class="fas fa-compress" aria-hidden="true"></i> Keluar Layar Penuh';
         } else {
             document.exitFullscreen();
@@ -1087,7 +1209,7 @@
                 dom.thresholdWaspadaInput.value = state.thresholdWaspada;
                 dom.thresholdBahayaInput.value = state.thresholdBahaya;
             }
-        } catch (_) {}
+        } catch (_) { }
     }
 
     function init() {
