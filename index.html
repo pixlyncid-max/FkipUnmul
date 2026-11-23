@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulasi Peringatan Dini Banjir di Lingkungan FKIP UNMUL</title>
-    <meta name="description" content="Sistem Telemetri Sensor AJ-SR04M dan Kontrol Pompa Pengisi Air Berbasis IoT (ESP32 & Firebase) untuk Simulasi Peringatan Dini Banjir di Lingkungan FKIP Universitas Mulawarman">
+    <meta name="description"
+        content="Sistem Telemetri Sensor AJ-SR04M dan Kontrol Pompa Pengisi Air Berbasis IoT (ESP32 & Firebase) untuk Simulasi Peringatan Dini Banjir di Lingkungan FKIP Universitas Mulawarman">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
 
@@ -96,7 +101,8 @@
 
     <!-- Header Mobile -->
     <header class="mobile-header" id="mobile-header">
-        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false" aria-controls="sidebar">
+        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false"
+            aria-controls="sidebar">
             <i class="fas fa-bars" aria-hidden="true"></i>
             <span class="menu-toggle-text">Menu</span>
         </button>
@@ -113,7 +119,8 @@
 
     <!-- Konten Utama -->
     <main class="main-content" id="main-content">
-        <div class="notification-container" id="notification-container" role="region" aria-live="polite" aria-label="Notifikasi Sistem"></div>
+        <div class="notification-container" id="notification-container" role="region" aria-live="polite"
+            aria-label="Notifikasi Sistem"></div>
 
         <!-- Banner Identitas Akademik -->
         <header class="institutional-banner">
@@ -139,7 +146,8 @@
                 <i class="fas fa-spinner fa-spin" id="state-banner-icon" aria-hidden="true"></i>
                 <div class="state-banner-text">
                     <strong id="state-banner-title">Menghubungkan ke Sistem Telemetri IoT...</strong>
-                    <p id="state-banner-desc">Membuka koneksi real-time untuk menerima pembacaan sensor AJ-SR04M serta menyinkronkan kontrol pompa pengisi air.</p>
+                    <p id="state-banner-desc">Membuka koneksi real-time untuk menerima pembacaan sensor AJ-SR04M serta
+                        menyinkronkan kontrol pompa pengisi air.</p>
                 </div>
             </div>
         </div>
@@ -149,7 +157,8 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title" id="heading-dashboard">Dashboard Telemetri &amp; Kontrol Pompa</h2>
-                    <p class="section-subtitle">Pemantauan ketinggian air sensor ultrasonik AJ-SR04M dan kendali pompa pengisi air maket secara langsung</p>
+                    <p class="section-subtitle">Pemantauan ketinggian air sensor ultrasonik AJ-SR04M dan kendali pompa
+                        pengisi air maket secara langsung</p>
                 </div>
                 <div class="header-actions">
                     <span class="last-sync-label" id="last-sync-info">Pembaruan terakhir: Menunggu data</span>
@@ -195,10 +204,12 @@
                                     <span class="unit">cm</span>
                                 </div>
                                 <p class="water-distance-meta">
-                                    Jarak sensor ke permukaan: <strong class="mono-text" id="sensor-distance-value">-- cm</strong>
+                                    Jarak sensor ke permukaan: <strong class="mono-text" id="sensor-distance-value">--
+                                        cm</strong>
                                 </p>
                                 <p class="water-distance-meta">
-                                    Target pengisian pompa: <strong class="mono-text" id="target-level-display">Tidak ada target aktif</strong>
+                                    Target pengisian pompa: <strong class="mono-text" id="target-level-display">Tidak
+                                        ada target aktif</strong>
                                 </p>
                             </div>
 
@@ -209,7 +220,8 @@
                                         <span id="water-status-text">MENUNGGU DATA</span>
                                     </span>
                                 </div>
-                                <p class="status-desc" id="status-description">Menunggu pembacaan ketinggian air dari perangkat ESP32.</p>
+                                <p class="status-desc" id="status-description">Menunggu pembacaan ketinggian air dari
+                                    perangkat ESP32.</p>
                             </div>
                         </div>
                     </div>
@@ -227,12 +239,14 @@
 
                     <div class="pump-control-body">
                         <p class="pump-control-explain">
-                            Pompa digunakan untuk mengisi air ke dalam maket guna mensimulasikan kenaikan banjir pada ketinggian <strong>1 cm</strong>, <strong>2 cm</strong>, dan <strong>3 cm</strong>.
+                            Pompa digunakan untuk mengisi air ke dalam maket guna mensimulasikan kenaikan banjir pada
+                            ketinggian <strong>1 cm</strong>, <strong>2 cm</strong>, dan <strong>3 cm</strong>.
                         </p>
 
                         <div class="control-group-box">
                             <span class="control-label">Isi Air Otomatis ke Target Ketinggian</span>
-                            <div class="target-level-grid" role="group" aria-label="Pilih Target Ketinggian Pengisian Air">
+                            <div class="target-level-grid" role="group"
+                                aria-label="Pilih Target Ketinggian Pengisian Air">
                                 <button type="button" class="target-btn" data-target-cm="1" id="btn-dash-target-1">
                                     <span class="target-cm mono-text">1 cm</span>
                                     <span class="target-desc">Level Normal</span>
@@ -246,7 +260,9 @@
                                     <span class="target-desc">Level Bahaya</span>
                                 </button>
                             </div>
-                            <small class="control-hint" id="pump-mode-hint">Pilih target 1 cm, 2 cm, atau 3 cm: pompa akan menyala mengisi air dan otomatis mati saat sensor AJ-SR04M mencapai ketinggian tersebut.</small>
+                            <small class="control-hint" id="pump-mode-hint">Pilih target 1 cm, 2 cm, atau 3 cm: pompa
+                                akan menyala mengisi air dan otomatis mati saat sensor AJ-SR04M mencapai ketinggian
+                                tersebut.</small>
                         </div>
 
                         <div class="control-group-box">
@@ -305,7 +321,8 @@
                             <div class="sensor-icon" aria-hidden="true"><i class="fas fa-wave-square"></i></div>
                             <div class="sensor-info">
                                 <span class="sensor-name">Sensor Ultrasonik AJ-SR04M</span>
-                                <span class="sensor-desc" id="ultrasonic-desc">Pengukuran jarak &amp; tinggi permukaan air</span>
+                                <span class="sensor-desc" id="ultrasonic-desc">Pengukuran jarak &amp; tinggi permukaan
+                                    air</span>
                             </div>
                             <span class="sensor-badge offline" id="ultrasonic-badge">Menunggu</span>
                         </div>
@@ -378,7 +395,8 @@
                         </div>
                     </div>
                     <p class="stats-footnote">
-                        Statistik dihitung secara langsung dari paket data sensor AJ-SR04M yang diterima selama sesi pemantauan berlangsung.
+                        Statistik dihitung secara langsung dari paket data sensor AJ-SR04M yang diterima selama sesi
+                        pemantauan berlangsung.
                     </p>
                 </article>
             </div>
@@ -388,8 +406,10 @@
         <section class="section" id="simulasi" aria-labelledby="heading-simulasi">
             <div class="section-header">
                 <div>
-                    <h2 class="section-title" id="heading-simulasi">Panel Kontrol Pompa Pengisi Air &amp; Monitor Maket</h2>
-                    <p class="section-subtitle">Kendalikan pompa untuk mengisi air maket ke ketinggian 1 cm, 2 cm, atau 3 cm dan amati respons sensor AJ-SR04M, LED, serta Buzzer</p>
+                    <h2 class="section-title" id="heading-simulasi">Panel Kontrol Pompa Pengisi Air &amp; Monitor Maket
+                    </h2>
+                    <p class="section-subtitle">Kendalikan pompa untuk mengisi air maket ke ketinggian 1 cm, 2 cm, atau
+                        3 cm dan amati respons sensor AJ-SR04M, LED, serta Buzzer</p>
                 </div>
             </div>
 
@@ -406,7 +426,9 @@
                     <div class="control-panel-stack">
                         <div class="control-block">
                             <span class="block-title">1. Pengisian Air Bertahap (Preset Target 1 cm, 2 cm, 3 cm)</span>
-                            <p class="block-desc">Pilih target ketinggian air simulasi. Sistem akan menyalakan pompa pengisi air hingga sensor AJ-SR04M mendeteksi air mencapai batas target yang dipilih.</p>
+                            <p class="block-desc">Pilih target ketinggian air simulasi. Sistem akan menyalakan pompa
+                                pengisi air hingga sensor AJ-SR04M mendeteksi air mencapai batas target yang dipilih.
+                            </p>
                             <div class="target-level-grid" role="group" aria-label="Target Ketinggian Pengisian Air">
                                 <button type="button" class="target-btn" data-target-cm="1" id="btn-sim-target-1">
                                     <span class="target-cm mono-text">Isi 1 cm</span>
@@ -425,7 +447,8 @@
 
                         <div class="control-block">
                             <span class="block-title">2. Sakelar Manual Pompa Pengisi Air</span>
-                            <p class="block-desc">Nyalakan pompa secara kontinu atau hentikan pengisian air kapan saja.</p>
+                            <p class="block-desc">Nyalakan pompa secara kontinu atau hentikan pengisian air kapan saja.
+                            </p>
                             <div class="sim-controls">
                                 <button type="button" class="btn btn-pump-on" id="btn-sim-pump-on">
                                     <i class="fas fa-play" aria-hidden="true"></i> Nyalakan Pompa (Isi Air)
@@ -440,8 +463,10 @@
                             <span class="block-title">3. Kendali Buzzer Peringatan</span>
                             <p class="block-desc">Redam (mute) atau aktifkan kembali bunyi alarm buzzer pada maket.</p>
                             <div class="sim-controls">
-                                <button type="button" class="btn btn-outline" id="btn-toggle-mute-buzzer" aria-pressed="false">
-                                    <i class="fas fa-volume-xmark" aria-hidden="true"></i> <span>Redam Buzzer (Mute: OFF)</span>
+                                <button type="button" class="btn btn-outline" id="btn-toggle-mute-buzzer"
+                                    aria-pressed="false">
+                                    <i class="fas fa-volume-xmark" aria-hidden="true"></i> <span>Redam Buzzer (Mute:
+                                        OFF)</span>
                                 </button>
                             </div>
                         </div>
@@ -523,7 +548,8 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title" id="heading-grafik">Grafik Telemetri Ketinggian Air (AJ-SR04M)</h2>
-                    <p class="section-subtitle">Bagaimana tren kenaikan permukaan air saat pompa mengisi maket dari 1 cm, 2 cm, hingga 3 cm?</p>
+                    <p class="section-subtitle">Bagaimana tren kenaikan permukaan air saat pompa mengisi maket dari 1
+                        cm, 2 cm, hingga 3 cm?</p>
                 </div>
                 <div class="header-actions">
                     <button type="button" class="btn btn-sm btn-outline" id="btn-chart-clear">
@@ -562,7 +588,8 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title" id="heading-historis">Log Historis Pengukuran</h2>
-                    <p class="section-subtitle">Catatan kronologis pembacaan sensor ultrasonik AJ-SR04M dan status pompa pengisi air</p>
+                    <p class="section-subtitle">Catatan kronologis pembacaan sensor ultrasonik AJ-SR04M dan status pompa
+                        pengisi air</p>
                 </div>
                 <div class="header-actions">
                     <button type="button" class="btn btn-sm btn-primary" id="btn-export-csv">
@@ -593,7 +620,8 @@
                                     <div class="empty-state">
                                         <i class="fas fa-database" aria-hidden="true"></i>
                                         <strong>Belum Ada Data Historis Tercatat</strong>
-                                        <p>Nyalakan perangkat ESP32 dan sensor AJ-SR04M pada maket untuk mulai merekam log ketinggian air secara otomatis.</p>
+                                        <p>Nyalakan perangkat ESP32 dan sensor AJ-SR04M pada maket untuk mulai merekam
+                                            log ketinggian air secara otomatis.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -611,8 +639,10 @@
         <section class="section" id="peringatan" aria-labelledby="heading-peringatan">
             <div class="section-header">
                 <div>
-                    <h2 class="section-title" id="heading-peringatan">Status Indikator LED, Buzzer &amp; Pompa Pengisi</h2>
-                    <p class="section-subtitle">Pemantauan visual kondisi aktuator peringatan dini pada maket FKIP UNMUL</p>
+                    <h2 class="section-title" id="heading-peringatan">Status Indikator LED, Buzzer &amp; Pompa Pengisi
+                    </h2>
+                    <p class="section-subtitle">Pemantauan visual kondisi aktuator peringatan dini pada maket FKIP UNMUL
+                    </p>
                 </div>
             </div>
 
@@ -657,7 +687,8 @@
                             </div>
                             <div class="buzzer-info">
                                 <span class="buzzer-title">Buzzer Alarm Aktif</span>
-                                <span class="buzzer-status" id="buzzer-status-text">Menunggu pembacaan status dari ESP32</span>
+                                <span class="buzzer-status" id="buzzer-status-text">Menunggu pembacaan status dari
+                                    ESP32</span>
                             </div>
                         </div>
                         <div class="buzzer-item">
@@ -666,7 +697,8 @@
                             </div>
                             <div class="buzzer-info">
                                 <span class="buzzer-title">Pompa Pengisi Air Simulasi</span>
-                                <span class="buzzer-status" id="pump-status-text">Menunggu perintah pengisian air (1 cm / 2 cm / 3 cm)</span>
+                                <span class="buzzer-status" id="pump-status-text">Menunggu perintah pengisian air (1 cm
+                                    / 2 cm / 3 cm)</span>
                             </div>
                         </div>
                     </div>
@@ -696,8 +728,10 @@
         <section class="section" id="iot-info" aria-labelledby="heading-iot">
             <div class="section-header">
                 <div>
-                    <h2 class="section-title" id="heading-iot">Arsitektur Perangkat Keras &amp; Spesifikasi Komponen</h2>
-                    <p class="section-subtitle">Topologi sistem IoT menggunakan ESP32, Sensor Ultrasonik Waterproof AJ-SR04M, Pompa Pengisi Air, Buzzer, dan 3 LED</p>
+                    <h2 class="section-title" id="heading-iot">Arsitektur Perangkat Keras &amp; Spesifikasi Komponen
+                    </h2>
+                    <p class="section-subtitle">Topologi sistem IoT menggunakan ESP32, Sensor Ultrasonik Waterproof
+                        AJ-SR04M, Pompa Pengisi Air, Buzzer, dan 3 LED</p>
                 </div>
             </div>
 
@@ -763,7 +797,9 @@
                             <p class="iot-card-subtitle">Waterproof Ultrasonic Distance Sensor</p>
                         </div>
                     </div>
-                    <p>Sensor ultrasonik tahan air (transduser kabel terpisah) yang dipasang di atas wadah maket. Mengukur perubahan jarak permukaan air saat pompa mengisi wadah dari ketinggian 1 cm, 2 cm, hingga 3 cm.</p>
+                    <p>Sensor ultrasonik tahan air (transduser kabel terpisah) yang dipasang di atas wadah maket.
+                        Mengukur perubahan jarak permukaan air saat pompa mengisi wadah dari ketinggian 1 cm, 2 cm,
+                        hingga 3 cm.</p>
                     <div class="iot-specs">
                         <span>Tegangan: 5V DC</span>
                         <span>Tahan Air: Probe Waterproof</span>
@@ -778,7 +814,9 @@
                             <p class="iot-card-subtitle">Mikrokontroler Utama (Wi-Fi 2.4 GHz)</p>
                         </div>
                     </div>
-                    <p>Memproses sinyal pantul dari modul AJ-SR04M, mengeksekusi perintah pengisian pompa air dari dashboard web sampai mencapai target ketinggian (1 cm, 2 cm, atau 3 cm), serta menyalakan LED dan Buzzer.</p>
+                    <p>Memproses sinyal pantul dari modul AJ-SR04M, mengeksekusi perintah pengisian pompa air dari
+                        dashboard web sampai mencapai target ketinggian (1 cm, 2 cm, atau 3 cm), serta menyalakan LED
+                        dan Buzzer.</p>
                     <div class="iot-specs">
                         <span>Tegangan: 3.3V / 5V USB</span>
                         <span>Konektivitas: Wi-Fi 2.4 GHz</span>
@@ -793,7 +831,9 @@
                             <p class="iot-card-subtitle">Aktuator Simulasi Kenaikan Banjir</p>
                         </div>
                     </div>
-                    <p>Pompa air mini DC 3 sampai 6V yang memompa air dari tandon ke wadah maket lingkungan FKIP UNMUL untuk mensimulasikan naiknya genangan banjir secara bertahap (1 cm, 2 cm, 3 cm) melalui kontrol web.</p>
+                    <p>Pompa air mini DC 3 sampai 6V yang memompa air dari tandon ke wadah maket lingkungan FKIP UNMUL
+                        untuk mensimulasikan naiknya genangan banjir secara bertahap (1 cm, 2 cm, 3 cm) melalui kontrol
+                        web.</p>
                     <div class="iot-specs">
                         <span>Sakelar: Modul Relay 5V</span>
                         <span>Fungsi: Pengisi Air Simulasi</span>
@@ -808,7 +848,9 @@
                             <p class="iot-card-subtitle">Hijau (1 cm), Kuning (2 cm), Merah (3 cm)</p>
                         </div>
                     </div>
-                    <p>Memberikan tanda visual langsung pada maket lingkungan FKIP UNMUL: LED Hijau untuk ketinggian normal (~1 cm), LED Kuning saat air mencapai 2 cm (Waspada), dan LED Merah saat mencapai 3 cm (Bahaya).</p>
+                    <p>Memberikan tanda visual langsung pada maket lingkungan FKIP UNMUL: LED Hijau untuk ketinggian
+                        normal (~1 cm), LED Kuning saat air mencapai 2 cm (Waspada), dan LED Merah saat mencapai 3 cm
+                        (Bahaya).</p>
                     <div class="iot-specs">
                         <span>Resistor Pembatas: 220 &Omega;</span>
                         <span>3 Warna Indikator</span>
@@ -823,7 +865,9 @@
                             <p class="iot-card-subtitle">Alarm Audio Peringatan Dini</p>
                         </div>
                     </div>
-                    <p>Memberikan peringatan suara ketika sensor AJ-SR04M mendeteksi ketinggian air mencapai level Waspada (2 cm) dan berbunyi intensif pada level Bahaya (3 cm). Dapat diredam melalui tombol Mute di web.</p>
+                    <p>Memberikan peringatan suara ketika sensor AJ-SR04M mendeteksi ketinggian air mencapai level
+                        Waspada (2 cm) dan berbunyi intensif pada level Bahaya (3 cm). Dapat diredam melalui tombol Mute
+                        di web.</p>
                     <div class="iot-specs">
                         <span>Tegangan: 3.3V s.d. 5V DC</span>
                         <span>Output: &ge; 85 dB</span>
@@ -838,7 +882,8 @@
                             <p class="iot-card-subtitle">Komunikasi Data Dua Arah</p>
                         </div>
                     </div>
-                    <p>Menghubungkan perangkat maket dengan dashboard web secara langsung sehingga perubahan tinggi air dari sensor AJ-SR04M dan kendali pompa dapat dipantau dari perangkat mana saja.</p>
+                    <p>Menghubungkan perangkat maket dengan dashboard web secara langsung sehingga perubahan tinggi air
+                        dari sensor AJ-SR04M dan kendali pompa dapat dipantau dari perangkat mana saja.</p>
                     <div class="iot-specs">
                         <span>Transmisi: Real-time</span>
                         <span>Akses: Web Dashboard</span>
@@ -852,7 +897,8 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title" id="heading-profil">Profil Proyek &amp; Integrasi STEM</h2>
-                    <p class="section-subtitle">Simulasi Peringatan Dini Banjir di Lingkungan FKIP Universitas Mulawarman</p>
+                    <p class="section-subtitle">Simulasi Peringatan Dini Banjir di Lingkungan FKIP Universitas
+                        Mulawarman</p>
                 </div>
             </div>
 
@@ -866,8 +912,15 @@
                             </div>
                         </div>
                         <div class="project-content">
-                            <p>Kawasan kampus dan lingkungan sekitar Fakultas Keguruan dan Ilmu Pendidikan Universitas Mulawarman (FKIP UNMUL) di Samarinda memiliki kerentanan terhadap genangan air dan banjir saat curah hujan tinggi.</p>
-                            <p>Melalui proyek berbasis pendekatan STEM (Science, Technology, Engineering, and Mathematics) ini, mahasiswa merancang maket <strong>Simulasi Peringatan Dini Banjir di Lingkungan FKIP UNMUL</strong> menggunakan mikrokontroler ESP32, sensor ultrasonik tahan air <strong>AJ-SR04M</strong>, indikator LED, buzzer, serta pompa pengisi air yang dapat dikontrol dari web untuk mensimulasikan kenaikan air pada level 1 cm, 2 cm, dan 3 cm.</p>
+                            <p>Kawasan kampus dan lingkungan sekitar Fakultas Keguruan dan Ilmu Pendidikan Universitas
+                                Mulawarman (FKIP UNMUL) di Samarinda memiliki kerentanan terhadap genangan air dan
+                                banjir saat curah hujan tinggi.</p>
+                            <p>Melalui proyek berbasis pendekatan STEM (Science, Technology, Engineering, and
+                                Mathematics) ini, mahasiswa merancang maket <strong>Simulasi Peringatan Dini Banjir di
+                                    Lingkungan FKIP UNMUL</strong> menggunakan mikrokontroler ESP32, sensor ultrasonik
+                                tahan air <strong>AJ-SR04M</strong>, indikator LED, buzzer, serta pompa pengisi air yang
+                                dapat dikontrol dari web untuk mensimulasikan kenaikan air pada level 1 cm, 2 cm, dan 3
+                                cm.</p>
                         </div>
                     </article>
 
@@ -882,19 +935,24 @@
                             <ul class="styled-list">
                                 <li>
                                     <i class="fas fa-check" aria-hidden="true"></i>
-                                    <span>Membangun prototipe maket simulasi kenaikan air banjir (1 cm, 2 cm, 3 cm) berbasis ESP32 dan sensor ultrasonik AJ-SR04M untuk lingkungan FKIP UNMUL.</span>
+                                    <span>Membangun prototipe maket simulasi kenaikan air banjir (1 cm, 2 cm, 3 cm)
+                                        berbasis ESP32 dan sensor ultrasonik AJ-SR04M untuk lingkungan FKIP
+                                        UNMUL.</span>
                                 </li>
                                 <li>
                                     <i class="fas fa-check" aria-hidden="true"></i>
-                                    <span>Mengintegrasikan komunikasi dua arah antara perangkat keras IoT pada maket dan aplikasi web pemantauan.</span>
+                                    <span>Mengintegrasikan komunikasi dua arah antara perangkat keras IoT pada maket dan
+                                        aplikasi web pemantauan.</span>
                                 </li>
                                 <li>
                                     <i class="fas fa-check" aria-hidden="true"></i>
-                                    <span>Menyediakan antarmuka web bagi mahasiswa untuk mengontrol pompa pengisi air maket, memantau respons LED dan buzzer, serta mengunduh data historis.</span>
+                                    <span>Menyediakan antarmuka web bagi mahasiswa untuk mengontrol pompa pengisi air
+                                        maket, memantau respons LED dan buzzer, serta mengunduh data historis.</span>
                                 </li>
                                 <li>
                                     <i class="fas fa-check" aria-hidden="true"></i>
-                                    <span>Menerapkan konsep sains, teknologi, rekayasa, dan matematika secara terpadu dalam pemecahan masalah lingkungan kampus.</span>
+                                    <span>Menerapkan konsep sains, teknologi, rekayasa, dan matematika secara terpadu
+                                        dalam pemecahan masalah lingkungan kampus.</span>
                                 </li>
                             </ul>
                         </div>
@@ -912,22 +970,26 @@
                         <div class="stem-item">
                             <span class="stem-tag">SCIENCE</span>
                             <h4>Sains (Fisika &amp; Hidrologi)</h4>
-                            <p>Perambatan gelombang bunyi ultrasonik dari transduser AJ-SR04M di udara serta dinamika kenaikan tinggi muka air pada cekungan maket lingkungan FKIP UNMUL.</p>
+                            <p>Perambatan gelombang bunyi ultrasonik dari transduser AJ-SR04M di udara serta dinamika
+                                kenaikan tinggi muka air pada cekungan maket lingkungan FKIP UNMUL.</p>
                         </div>
                         <div class="stem-item">
                             <span class="stem-tag">TECHNOLOGY</span>
                             <h4>Teknologi (IoT &amp; Web)</h4>
-                            <p>Pemanfaatan mikrokontroler ESP32, pembacaan sensor jarak AJ-SR04M, jaringan komunikasi nirkabel, dan sistem kendali jarak jauh berbasis web.</p>
+                            <p>Pemanfaatan mikrokontroler ESP32, pembacaan sensor jarak AJ-SR04M, jaringan komunikasi
+                                nirkabel, dan sistem kendali jarak jauh berbasis web.</p>
                         </div>
                         <div class="stem-item">
                             <span class="stem-tag">ENGINEERING</span>
                             <h4>Rekayasa (Elektronika &amp; Maket)</h4>
-                            <p>Perancangan rangkaian elektronika (ESP32, sensor AJ-SR04M, relay pompa pengisi air, LED, buzzer) serta konstruksi fisik maket kawasan FKIP UNMUL.</p>
+                            <p>Perancangan rangkaian elektronika (ESP32, sensor AJ-SR04M, relay pompa pengisi air, LED,
+                                buzzer) serta konstruksi fisik maket kawasan FKIP UNMUL.</p>
                         </div>
                         <div class="stem-item">
                             <span class="stem-tag">MATHEMATICS</span>
                             <h4>Matematika (Kalkulasi &amp; Statistik)</h4>
-                            <p>Perhitungan konversi waktu pantul gelombang menjadi jarak, selisih tinggi pemasangan sensor terhadap permukaan air (1 cm, 2 cm, 3 cm), dan statistik rata-rata.</p>
+                            <p>Perhitungan konversi waktu pantul gelombang menjadi jarak, selisih tinggi pemasangan
+                                sensor terhadap permukaan air (1 cm, 2 cm, 3 cm), dan statistik rata-rata.</p>
                         </div>
                     </div>
                 </article>
@@ -943,37 +1005,37 @@
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">FA</div>
                             <h4>Fatmawati</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">Software / Algorithm Developver</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">SR</div>
                             <h4>Suci Ramadhani Safitri</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">Prototype / Hardware Enginner</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">AN</div>
                             <h4>Azzahra Nur Ramadani</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">Data Analyst</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">CA</div>
                             <h4>Cahaya Aulia Fathana</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">Project Coordinator</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">AL</div>
                             <h4>Alika Nurfadillah</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">STEM / Pedagogy Designer</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                         <div class="member-card">
                             <div class="member-initials" aria-hidden="true">ZA</div>
                             <h4>Zaskia Awaliya</h4>
-                            <span class="member-role">Anggota Tim Pengembang</span>
+                            <span class="member-role">Testing & Documentation</span>
                             <span class="member-nim">FKIP Universitas Mulawarman</span>
                         </div>
                     </div>
@@ -1016,7 +1078,8 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title" id="heading-pengaturan">Pengaturan &amp; Kalibrasi Maket</h2>
-                    <p class="section-subtitle">Sesuaikan parameter kalibrasi level air (1 cm, 2 cm, 3 cm) dan preferensi tampilan dashboard</p>
+                    <p class="section-subtitle">Sesuaikan parameter kalibrasi level air (1 cm, 2 cm, 3 cm) dan
+                        preferensi tampilan dashboard</p>
                 </div>
             </div>
 
@@ -1032,16 +1095,20 @@
                     <form class="settings-form" id="threshold-config-form" novalidate>
                         <div class="form-group">
                             <label for="threshold-max-water">Tinggi Skala Maksimum Wadah Maket (cm)</label>
-                            <input type="number" id="threshold-max-water" value="5" min="3" max="300" step="0.5" required>
-                            <small>Tinggi maksimum skala tangki visual (Default: 5 cm untuk pengujian pengisian 1 cm, 2 cm, 3 cm).</small>
+                            <input type="number" id="threshold-max-water" value="5" min="3" max="300" step="0.5"
+                                required>
+                            <small>Tinggi maksimum skala tangki visual (Default: 5 cm untuk pengujian pengisian 1 cm, 2
+                                cm, 3 cm).</small>
                         </div>
                         <div class="form-group">
                             <label for="threshold-waspada">
                                 <span class="label-dot waspada" aria-hidden="true"></span>
                                 Batas Status Waspada (cm)
                             </label>
-                            <input type="number" id="threshold-waspada" value="2" min="0.5" max="250" step="0.5" required>
-                            <small>Default: 2 cm (0 s.d. 1.9 cm = Normal / LED Hijau; &ge; 2 cm = Waspada / LED Kuning).</small>
+                            <input type="number" id="threshold-waspada" value="2" min="0.5" max="250" step="0.5"
+                                required>
+                            <small>Default: 2 cm (0 s.d. 1.9 cm = Normal / LED Hijau; &ge; 2 cm = Waspada / LED
+                                Kuning).</small>
                         </div>
                         <div class="form-group">
                             <label for="threshold-bahaya">
@@ -1069,7 +1136,8 @@
                         <div class="setting-row">
                             <div class="setting-info">
                                 <span class="setting-title">Tema Latar Tampilan</span>
-                                <span class="setting-desc">Beralih antara Latar Putih Terang (Default) dan Mode Gelap</span>
+                                <span class="setting-desc">Beralih antara Latar Putih Terang (Default) dan Mode
+                                    Gelap</span>
                             </div>
                             <button type="button" class="btn btn-outline toggle-btn" id="btn-toggle-theme">
                                 <i class="fas fa-moon" aria-hidden="true"></i> Mode Gelap
@@ -1078,7 +1146,8 @@
                         <div class="setting-row">
                             <div class="setting-info">
                                 <span class="setting-title">Mode Layar Penuh</span>
-                                <span class="setting-desc">Tampilkan dashboard penuh saat presentasi atau demonstrasi maket</span>
+                                <span class="setting-desc">Tampilkan dashboard penuh saat presentasi atau demonstrasi
+                                    maket</span>
                             </div>
                             <button type="button" class="btn btn-outline" id="btn-fullscreen">
                                 <i class="fas fa-expand" aria-hidden="true"></i> Layar Penuh
@@ -1128,4 +1197,5 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" defer></script>
     <script src="js/app.js" defer></script>
 </body>
+
 </html>
